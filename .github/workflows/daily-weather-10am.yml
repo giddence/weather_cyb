@@ -1,0 +1,23 @@
+name: 每日气象预警推送 (10:05)
+
+on:
+  schedule:
+    - cron: '5 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  fetch-and-send:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 代码
+        uses: actions/checkout@v4
+
+      - name: 安装 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 暴雨预警 + 降水预报 → 企微推送
+        env:
+          WECOM_WEBHOOK_URL: ${{ secrets.WECOM_WEBHOOK_URL }}
+        run: python weather_cma_bot.py --mode page --channels "374,339"
